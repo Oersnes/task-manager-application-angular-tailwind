@@ -1,0 +1,9 @@
+<button
+    class="btn"
+    [type]="type()"
+    [ngClass]="derivedClasses()"
+    [attr.disabled]="disabled() ? true : null"
+    (click)="handleClick()"
+>
+    <ng-content />
+</button>

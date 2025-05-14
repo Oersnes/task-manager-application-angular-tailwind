@@ -1,0 +1,45 @@
+
+@reference "../../../styles.css";
+
+.btn-color-primary {
+    @apply text-sky-700 dark:text-sky-200 ;
+    
+    &.btn-variant-contained {
+        @apply bg-sky-100  dark:bg-sky-700/50 border-none;
+    }
+    &.btn-variant-cta {
+        @apply bg-sky-700 text-sky-100 border-none;
+    }
+    &.btn-variant-outlined {
+        @apply bg-transparent border-sky-200/50 dark:border-sky-700/50;
+    }
+}
+.btn-color-danger {
+    @apply text-red-700 dark:text-red-100;
+    
+    &.btn-variant-contained {
+        @apply bg-red-100  dark:bg-red-500/50 border-none;
+    }
+    &.btn-variant-cta {
+        @apply bg-red-700 text-red-100 border-none;
+    }
+    &.btn-variant-outlined {
+        @apply bg-transparent border-red-200/50 dark:border-red-700/50;
+    }
+}
+.btn-color-default {
+    @apply text-slate-700 dark:text-slate-100;
+    
+    &.btn-variant-contained {
+        @apply bg-slate-100  dark:bg-slate-700/50 border-none;
+    }
+    &.btn-variant-cta {
+        @apply bg-slate-700 text-slate-100 border-none;
+    }
+    &.btn-variant-outlined {
+        @apply bg-transparent border-slate-200/50 dark:border-slate-700/50;
+    }
+}
+.btn-variant-ghost {
+    @apply bg-transparent border-none;
+}
