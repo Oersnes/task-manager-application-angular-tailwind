@@ -1,6 +1,10 @@
 export type TaskId = string;
 
-export type TaskStatus = 'Todo' | 'In Progress' | 'Completed';
+export enum TaskStatus {
+    Todo = 'todo',
+    InProgress = 'inProgress',
+    Completed = 'completed',
+}
 
 export type Task = {
     id: TaskId;

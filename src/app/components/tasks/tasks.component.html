@@ -1,1 +1,119 @@
-<div>Tasks are coming soon!</div>
+<div class="flex grid-cols-[auto_1fr] justify-between">
+    <div class="p-1 bg-slate-200 rounded dark:bg-slate-900">
+        <nav class="flex gap-1">
+            <a
+                routerLink="/tasks"
+                [queryParams]="{ status: null }"
+                class="p-2 py-1.5 min-w-12 text-center rounded"
+                [ngClass]="{ 'bg-slate-50 dark:bg-slate-700': store.selectedStatus() === null }"
+            >
+                All
+            </a>
+            <a
+                routerLink="/tasks"
+                [queryParams]="{ status: TaskStatus.Todo }"
+                class="p-2 py-1.5 min-w-12 text-center rounded"
+                [ngClass]="{ 'bg-slate-50 dark:bg-slate-700': store.selectedStatus() === TaskStatus.Todo }"
+            >
+                {{ TaskStatus.Todo | taskStatus }}
+            </a>
+            <a
+                routerLink="/tasks"
+                [queryParams]="{ status: TaskStatus.InProgress }"
+                class="p-2 py-1.5 min-w-12 text-center rounded"
+                [ngClass]="{ 'bg-slate-50 dark:bg-slate-700': store.selectedStatus() === TaskStatus.InProgress }"
+            >
+                {{ TaskStatus.InProgress | taskStatus }}
+            </a>
+            <a
+                routerLink="/tasks"
+                [queryParams]="{ status: TaskStatus.Completed }"
+                class="p-2 py-1.5 min-w-12 text-center rounded"
+                [ngClass]="{ 'bg-slate-50 dark:bg-slate-700': store.selectedStatus() === TaskStatus.Completed }"
+            >
+                {{ TaskStatus.Completed | taskStatus }}
+            </a>
+        </nav>
+    </div>
+    <div class="grid gap-2 items-center grid-cols-[1fr_auto] justify-items-end">
+        <input
+            type="search"
+            class="input bg-inherit dark:input-secondary placeholder:text-neutral-500 rounded"
+            placeholder="Search tasks..."
+        />
+        <app-button
+            variant="cta"
+            color="primary"
+            (onClick)="createTask()"
+        >
+            New task
+        </app-button>
+    </div>
+</div>
+
+@if ( store.isLoading()){
+<div class="flex justify-center items-center mt-4">
+    <mat-spinner
+        strokeWidth="2"
+        diameter="32"
+        class=""
+    ></mat-spinner>
+</div>
+
+} @else {
+<div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 grid-cols-1">
+    @for (task of this.store.sortedAndFilteredTasks(); track task.id) {
+    <div class="border rounded border-gray-200 dark:border-neutral-700 group">
+        <div
+            class="text-xs px-4 pt-2.5"
+            matTooltip="{{ task.creationDate | date : 'medium' }}"
+        >
+            Created {{ task.creationDate | fromNow }}
+        </div>
+        <div
+            class="px-4 pt-1 text-base font-medium truncate"
+            matTooltip="{{ task.name }}"
+            [matTooltipPosition]="'above'"
+        >
+            {{ task.name }}
+        </div>
+
+        <div
+            class="px-4 text-sm truncate text-neutral-500"
+            matTooltip="{{ task.description }}"
+            [matTooltipPosition]="'above'"
+        >
+            {{ task.description }}
+        </div>
+        <div class="flex px-4 pb-2 justify-between items-center mt-2">
+            <div class="">
+                <app-task-status-badge [status]="task.status"></app-task-status-badge>
+            </div>
+            <div class="flex place-items-end">
+                <app-button
+                    class="btn-circle"
+                    color="primary"
+                    variant="ghost"
+                    size="small"
+                    matTooltip="Edit task"
+                >
+                    <mat-icon>edit</mat-icon>
+                </app-button>
+                <app-button
+                    class="btn-circle"
+                    color="primary"
+                    variant="ghost"
+                    size="small"
+                    matTooltip="Delete task"
+                    (click)="this.store.deleteTask(task.id)"
+                >
+                    <mat-icon>close</mat-icon>
+                </app-button>
+            </div>
+        </div>
+    </div>
+    } @empty {
+    <div class="col-span-full">You have no tasks with the current filter applied 🎉</div>
+    }
+</div>
+}
