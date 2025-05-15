@@ -60,8 +60,7 @@ export const TasksStore = signalStore(
         deleteTask(taskId: TaskId) {
             apiService.deleteTask(taskId).subscribe({
                 next: () => {
-                    //  this.loadTasks();
-                    this.loadBySearchTerm(store.searchTerm());
+                    patchState(store, { tasks: store.tasks().filter((task) => task.id !== taskId) });
                 },
                 error: () => {
                     //
@@ -71,8 +70,7 @@ export const TasksStore = signalStore(
         createTask(task: { name: string; description: string }) {
             apiService.createTask(task).subscribe({
                 next: (response) => {
-                    // this.loadTasks();
-                    this.loadBySearchTerm(store.searchTerm());
+                    patchState(store, { tasks: [...store.tasks(), response] });
                 },
                 error: () => {
                     //
@@ -82,8 +80,12 @@ export const TasksStore = signalStore(
         updateTask(taskId: TaskId, task: UpdatedTask) {
             apiService.updateTask(taskId, task).subscribe({
                 next: (response) => {
-                    // this.loadTasks();
-                    this.loadBySearchTerm(store.searchTerm());
+                    const currentTasks = store.tasks();
+                    const indexOfCurrentTask = currentTasks.findIndex((task) => task.id === taskId);
+                    if (indexOfCurrentTask > -1) {
+                        currentTasks[indexOfCurrentTask] = response;
+                    }
+                    patchState(store, { tasks: [...currentTasks] });
                 },
                 error: () => {
                     //

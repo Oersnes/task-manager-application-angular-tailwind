@@ -13,7 +13,6 @@ import { TasksStore } from '../../stores/tasks.store';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { ButtonComponent } from '../button/button.component';
 import { InputComponent } from '../input/input.component';
-import { TaskStatusBadgeComponent } from '../task-status-badge/task-status-badge.component';
 
 const confirmedIdentifier = 'confirmed';
 
@@ -23,7 +22,6 @@ const confirmedIdentifier = 'confirmed';
         MatIcon,
         ButtonComponent,
         MatProgressSpinnerModule,
-        TaskStatusBadgeComponent,
         MatTooltip,
         CommonModule,
         FromNowPipe,
@@ -79,7 +77,7 @@ export class TasksComponent implements OnInit {
     }
 
     ngOnInit() {
-        const searchTerm = this.store.searchTerm;
+        const searchTerm = this.store.searchTerm();
         this.store.loadBySearchTerm(searchTerm);
         this.route.queryParams.subscribe((params) => {
             this.store.updateSelectedStatus(params['status']);
