@@ -52,7 +52,7 @@ export class TasksComponent implements OnInit {
         searchTerm: new FormControl('', [Validators.required]),
     });
 
-    createTask() {
+    openCreateTaskDialog() {
         const dialogRef = this.dialog.open(CreateTaskDialog, { disableClose: true });
         dialogRef.afterClosed().subscribe((result) => {
             console.log(`Dialog result: ${result}`);
@@ -77,11 +77,11 @@ export class TasksComponent implements OnInit {
     }
 
     ngOnInit() {
-        const searchTerm = this.store.searchTerm();
+        const searchTerm = this.store.searchTerm;
         this.store.loadBySearchTerm(searchTerm);
-        this.route.queryParams.subscribe((params) => {
+        /* this.route.queryParams.subscribe((params) => {
             this.store.updateSelectedStatus(params['status']);
-        });
+        }); */
         //this.store.loadTasks();
         /* this.route.paramMap.subscribe((params) => {
             console.log(params.get('tabId'));
@@ -93,7 +93,7 @@ export class TasksComponent implements OnInit {
 }
 
 @Component({
-    selector: 'dialog-content-example-dialog',
+    selector: 'create-task-dialog',
     templateUrl: 'create-task-dialog.html',
     imports: [MatDialogModule, ReactiveFormsModule, ButtonComponent, InputComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,

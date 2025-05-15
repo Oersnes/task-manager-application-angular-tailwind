@@ -1,4 +1,12 @@
-<div class="flex grid-cols-[auto_1fr] justify-end">
+<div class="flex justify-end items-center gap-4">
+    <div>
+        @if (store.isLoading()){
+        <mat-spinner
+            strokeWidth="2"
+            diameter="16"
+        ></mat-spinner>
+        }
+    </div>
     <div class="grid gap-2 items-center grid-cols-[1fr_auto] justify-items-end">
         <form
             [formGroup]="form"
@@ -15,7 +23,7 @@
         <app-button
             variant="cta"
             color="primary"
-            (onClick)="createTask()"
+            (onClick)="openCreateTaskDialog()"
         >
             New task
         </app-button>
@@ -23,11 +31,11 @@
 </div>
 
 <div class="grid grid-cols-1 mt-2 gap-x-4 lg:grid-cols-3">
-    @for (currentStatus of [TaskStatus.Todo, TaskStatus.InProgress, TaskStatus.Completed]; track currentStatus) {
+    @for (currentSwimlane of store.sortedSwimLanes(); track currentSwimlane.status) {
     <div class="">
         <div class="flex mt-6 mb-3 items-center gap-2">
             <div>
-                @switch (currentStatus) { @case (TaskStatus.Todo) {
+                @switch (currentSwimlane.status) { @case (TaskStatus.Todo) {
                 <app-avatar
                     color="sky"
                     icon="light"
@@ -49,20 +57,18 @@
             </div>
             <div>
                 <span class="text-xs block font-medium leading-none mb-1">Status</span>
-                <h1 class="text-xl font-semibold leading-none">
-                    {{ currentStatus | taskStatus }}
-                </h1>
+                <h1 class="text-xl font-semibold leading-none">{{ currentSwimlane.status | taskStatus }}</h1>
             </div>
         </div>
 
         <div class="grid grid-cols-1 gap-3 lg:grid-cols-1 sm:grid-cols-2">
-            @for (task of this.store.sortedAndFilteredTasks(); track task.id) { @if ( currentStatus === task.status ){
+            @for (task of currentSwimlane.tasks; track task.id) {
             <div
                 class="bg-white dark:bg-gray-800 rounded-lg px-4 pt-4 pb-4 ring shadow-lg ring-gray-900/5 border-l-4"
                 [class]="{
-                    'border-sky-200': currentStatus === TaskStatus.Todo,
-                    'border-amber-200': currentStatus === TaskStatus.InProgress,
-                    'border-emerald-200': currentStatus === TaskStatus.Completed
+                    'border-sky-200': task.status === TaskStatus.Todo,
+                    'border-amber-200': task.status === TaskStatus.InProgress,
+                    'border-emerald-200': task.status === TaskStatus.Completed
                 }"
             >
                 <div class="flex justify-end">
@@ -128,8 +134,6 @@
                     </div>
                 </div>
             </div>
-            } } @empty {
-            <div class="col-span-full">You have no tasks with the current filter applied 🎉</div>
             }
         </div>
     </div>

@@ -14,7 +14,6 @@ type TasksState = {
     searchTerm: string;
     sortDirection: 'asc' | 'desc';
     initialized: boolean;
-    selectedStatus: TaskStatus | null;
 };
 
 const initialState: TasksState = {
@@ -23,33 +22,47 @@ const initialState: TasksState = {
     initialized: false,
     searchTerm: '',
     sortDirection: 'asc',
-    selectedStatus: TaskStatus.Completed,
 };
 
 export const TasksStore = signalStore(
     { providedIn: 'root' }, // Avoid providers: [TasksStore] in each @Component. TasksStore is a single instance that can be shared by the entire app. Like a shoppingStore where we need to display the count inside the header
     withState(initialState),
-    withComputed(({ tasks, sortDirection, searchTerm, selectedStatus }) => ({
-        sortedAndFilteredTasks: computed(() => {
+    withComputed(({ tasks, sortDirection, searchTerm }) => ({
+        sortedSwimLanes: computed(() => {
             const direction = sortDirection() === 'asc' ? 1 : -1;
-            const clonedTasks = [...tasks()]; // See https://angular.dev/errors/NG0100
+            const clonedTasks = [...tasks()].sort((a, b) => direction * a.name.localeCompare(b.name)); // See https://angular.dev/errors/NG0100
 
-            return clonedTasks
-                .filter((task) => {
-                    if (selectedStatus() === null) {
-                        return task.name.toLocaleLowerCase().includes(searchTerm().toLocaleLowerCase());
-                    }
-                    return selectedStatus() === task.status && task.name.toLocaleLowerCase().includes(searchTerm().toLocaleLowerCase());
-                })
-                .sort((a, b) => direction * a.name.localeCompare(b.name));
+            const swimlanes = {
+                [TaskStatus.Todo]: <Task[]>[],
+                [TaskStatus.InProgress]: <Task[]>[],
+                [TaskStatus.Completed]: <Task[]>[],
+            };
+
+            clonedTasks.forEach((task) => {
+                if (swimlanes[task.status]) {
+                    swimlanes[task.status].push(task);
+                }
+            });
+
+            return [
+                {
+                    status: TaskStatus.Todo,
+                    tasks: swimlanes[TaskStatus.Todo],
+                },
+                {
+                    status: TaskStatus.InProgress,
+                    tasks: swimlanes[TaskStatus.InProgress],
+                },
+                {
+                    status: TaskStatus.Completed,
+                    tasks: swimlanes[TaskStatus.Completed],
+                },
+            ];
         }),
     })),
     withMethods((store, apiService = inject(ApiService)) => ({
         updateSearchTerm(searchTerm: string): void {
             patchState(store, (state) => ({ searchTerm: searchTerm }));
-        },
-        updateSelectedStatus(status: TaskStatus): void {
-            patchState(store, (state) => ({ selectedStatus: status || null }));
         },
         updateSortDirection(sortDirection: 'asc' | 'desc'): void {
             patchState(store, (state) => ({ sortDirection: sortDirection }));
@@ -62,9 +75,7 @@ export const TasksStore = signalStore(
                 next: () => {
                     patchState(store, { tasks: store.tasks().filter((task) => task.id !== taskId) });
                 },
-                error: () => {
-                    //
-                },
+                error: console.error, // TODO: Handle error
             });
         },
         createTask(task: { name: string; description: string }) {
@@ -72,9 +83,7 @@ export const TasksStore = signalStore(
                 next: (response) => {
                     patchState(store, { tasks: [...store.tasks(), response] });
                 },
-                error: () => {
-                    //
-                },
+                error: console.error, // TODO: Handle error
             });
         },
         updateTask(taskId: TaskId, task: UpdatedTask) {
@@ -87,25 +96,9 @@ export const TasksStore = signalStore(
                     }
                     patchState(store, { tasks: [...currentTasks] });
                 },
-                error: () => {
-                    //
-                },
+                error: console.error, // TODO: Handle error
             });
         },
-        /* loadTasks(): void {
-            patchState(store, { isLoading: true });
-            apiService.getTasksByName(store.searchTerm()).subscribe({
-                next: (response) => {
-                    patchState(store, {
-                        isLoading: false,
-                        tasks: response,
-                    });
-                },
-                error: (error) => {
-                    console.log(error);
-                },
-            });
-        }, */
         loadBySearchTerm: rxMethod<string>(
             pipe(
                 debounceTime(300),
