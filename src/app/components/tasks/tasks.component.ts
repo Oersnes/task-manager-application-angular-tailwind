@@ -80,7 +80,10 @@ export class TasksComponent implements OnInit {
     }
 
     changeTaskStatus(task: Task, newTaskStatus: TaskStatus) {
-        this.store.updateTask(task.id, { status: newTaskStatus });
+        this.store.updateTask(task.id, { status: newTaskStatus }).subscribe({
+            next: () => null,
+            error: () => null,
+        });
     }
 
     ngOnInit() {
