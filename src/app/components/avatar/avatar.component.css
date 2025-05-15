@@ -1,0 +1,24 @@
+@reference "../../../styles.css";
+
+.avatar-component {
+    @apply p-2 rounded-full inline-flex items-center justify-center;
+}
+
+.avatar-component-color-amber {
+    @apply text-amber-900 bg-amber-100;
+}
+.avatar-component-color-stone {
+    @apply text-stone-900 bg-stone-100;
+}
+.avatar-component-color-emerald {
+    @apply text-emerald-950 bg-emerald-100;
+}
+.avatar-component-color-sky {
+    @apply text-sky-950 bg-sky-100;
+}
+
+.avatar-component-size-medium mat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+}

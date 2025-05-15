@@ -10,6 +10,7 @@ import { Task, TaskStatus } from '../../models/Task';
 import { FromNowPipe } from '../../pipes/from-now.pipe';
 import { TaskStatusPipe } from '../../pipes/task-status.pipe';
 import { TasksStore } from '../../stores/tasks.store';
+import { AvatarComponent } from '../avatar/avatar.component';
 import { ButtonComponent } from '../button/button.component';
 import { InputComponent } from '../input/input.component';
 import { TaskStatusBadgeComponent } from '../task-status-badge/task-status-badge.component';
@@ -29,6 +30,7 @@ const confirmedIdentifier = 'confirmed';
         TaskStatusPipe,
         InputComponent,
         ReactiveFormsModule,
+        AvatarComponent,
     ],
     templateUrl: './tasks.component.html',
     styleUrl: './tasks.component.css',
@@ -70,6 +72,10 @@ export class TasksComponent implements OnInit {
                 this.store.deleteTask(task.id);
             }
         });
+    }
+
+    changeTaskStatus(task: Task, newTaskStatus: TaskStatus) {
+        this.store.updateTask(task.id, { status: newTaskStatus });
     }
 
     ngOnInit() {

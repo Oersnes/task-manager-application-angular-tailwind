@@ -41,7 +41,7 @@
     }
 }
 .btn-variant-ghost {
-    @apply bg-transparent border-none;
+    @apply bg-transparent border-none px-0;
 }
 
 [disabled="true"]{
