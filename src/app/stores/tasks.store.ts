@@ -3,7 +3,7 @@ import { patchState, signalStore, withComputed, withMethods, withState } from '@
 import { computed, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { debounceTime, distinctUntilChanged, pipe, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, pipe, switchMap, tap } from 'rxjs';
 
 import { Task, TaskId, TaskStatus, UpdatedTask } from '../models/Task';
 import { ApiService } from '../services/api.service';
@@ -64,40 +64,40 @@ export const TasksStore = signalStore(
         updateSearchTerm(searchTerm: string): void {
             patchState(store, (state) => ({ searchTerm: searchTerm }));
         },
-        updateSortDirection(sortDirection: 'asc' | 'desc'): void {
-            patchState(store, (state) => ({ sortDirection: sortDirection }));
+        deleteTask(taskId: TaskId): Observable<any> {
+            return apiService.deleteTask(taskId).pipe(
+                tapResponse({
+                    next: () => {
+                        patchState(store, { tasks: store.tasks().filter((task) => task.id !== taskId) });
+                    },
+                    error: console.error, // TODO: Handle error
+                })
+            );
         },
-        toggleIsLoading(): void {
-            patchState(store, (state) => ({ isLoading: !state.isLoading }));
+        createTask(task: { name: string; description: string }): Observable<any> {
+            return apiService.createTask(task).pipe(
+                tapResponse({
+                    next: (response) => {
+                        patchState(store, { tasks: [...store.tasks(), response] });
+                    },
+                    error: console.error, // TODO: Handle error
+                })
+            );
         },
-        deleteTask(taskId: TaskId) {
-            apiService.deleteTask(taskId).subscribe({
-                next: () => {
-                    patchState(store, { tasks: store.tasks().filter((task) => task.id !== taskId) });
-                },
-                error: console.error, // TODO: Handle error
-            });
-        },
-        createTask(task: { name: string; description: string }) {
-            apiService.createTask(task).subscribe({
-                next: (response) => {
-                    patchState(store, { tasks: [...store.tasks(), response] });
-                },
-                error: console.error, // TODO: Handle error
-            });
-        },
-        updateTask(taskId: TaskId, task: UpdatedTask) {
-            apiService.updateTask(taskId, task).subscribe({
-                next: (response) => {
-                    const currentTasks = store.tasks();
-                    const indexOfCurrentTask = currentTasks.findIndex((task) => task.id === taskId);
-                    if (indexOfCurrentTask > -1) {
-                        currentTasks[indexOfCurrentTask] = response;
-                    }
-                    patchState(store, { tasks: [...currentTasks] });
-                },
-                error: console.error, // TODO: Handle error
-            });
+        updateTask(taskId: TaskId, task: UpdatedTask): Observable<any> {
+            return apiService.updateTask(taskId, task).pipe(
+                tapResponse({
+                    next: (response) => {
+                        const currentTasks = store.tasks();
+                        const indexOfCurrentTask = currentTasks.findIndex((task) => task.id === taskId);
+                        if (indexOfCurrentTask > -1) {
+                            currentTasks[indexOfCurrentTask] = response;
+                        }
+                        patchState(store, { tasks: [...currentTasks] });
+                    },
+                    error: console.error,
+                })
+            );
         },
         loadBySearchTerm: rxMethod<string>(
             pipe(

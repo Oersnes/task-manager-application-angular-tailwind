@@ -67,7 +67,14 @@ export class TasksComponent implements OnInit {
         const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: true });
         dialogRef.afterClosed().subscribe((result) => {
             if (result === confirmedIdentifier) {
-                this.store.deleteTask(task.id);
+                this.store.deleteTask(task.id).subscribe({
+                    next: () => {
+                        // Store will do the cleanup.
+                    },
+                    error: () => {
+                        // Handle error
+                    },
+                });
             }
         });
     }
@@ -120,14 +127,20 @@ export class CreateTaskDialog {
 
     onSubmit(): void {
         if (this.form.valid) {
-            this.store.createTask({ name: this.form.value.name as string, description: this.form.value.description as string });
-            if (this.createAnother()) {
-                this.form.reset();
-                const invalidControl = this.el.nativeElement.querySelector('[formcontrolname="name"] input');
-                invalidControl.focus();
-            } else {
-                this.dialogRef.close(confirmedIdentifier);
-            }
+            this.store.createTask({ name: this.form.value.name as string, description: this.form.value.description as string }).subscribe({
+                next: () => {
+                    if (this.createAnother()) {
+                        this.form.reset();
+                        const invalidControl = this.el.nativeElement.querySelector('[formcontrolname="name"] input');
+                        invalidControl.focus();
+                    } else {
+                        this.dialogRef.close(confirmedIdentifier);
+                    }
+                },
+                error: () => {
+                    //
+                },
+            });
         } else {
             console.log('Form is invalid');
         }
@@ -135,7 +148,7 @@ export class CreateTaskDialog {
 }
 
 @Component({
-    templateUrl: 'edit-task-dialog.html', // Todo
+    templateUrl: 'edit-task-dialog.html',
     imports: [MatDialogModule, ReactiveFormsModule, ButtonComponent, InputComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -154,10 +167,18 @@ export class EditTaskDialog {
         this.dialogRef.close('cancelled');
     }
 
-    onSubmit(): void {
+    onSubmit() {
         if (this.form.valid) {
-            this.store.updateTask(this.originalTaskData.id, { name: this.form.value.name as string, description: this.form.value.description as string });
-            this.dialogRef.close(confirmedIdentifier);
+            this.store
+                .updateTask(this.originalTaskData.id, { name: this.form.value.name as string, description: this.form.value.description as string })
+                .subscribe({
+                    next: () => {
+                        this.dialogRef.close(confirmedIdentifier);
+                    },
+                    error: () => {
+                        //
+                    },
+                });
         } else {
             console.log('Form is invalid');
         }
