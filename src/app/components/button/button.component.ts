@@ -20,10 +20,11 @@ export class ButtonComponent {
     readonly color = input<'default' | 'primary' | 'danger'>('default');
     readonly size = input<'small' | 'medium' | 'large'>('medium');
     readonly disabled = input<boolean>(false);
+    readonly circle = input<boolean>(false);
     readonly class = input('');
 
     derivedClasses = computed(() => {
-        return [sizeClasses[this.size()] || '', this.class(), `btn-color-${this.color()}`, `btn-variant-${this.variant()}`];
+        return [sizeClasses[this.size()] || '', this.class(), `btn-color-${this.color()}`, `btn-variant-${this.variant()}`, this.circle() ? 'btn-circle' : ''];
     });
 
     @Output() onClick = new EventEmitter<void>();

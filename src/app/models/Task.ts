@@ -7,7 +7,7 @@ export enum TaskStatus {
 }
 
 export type Task = {
-    id: TaskId;
+    readonly id: TaskId;
     name: string;
     description?: string;
     status: TaskStatus;

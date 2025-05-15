@@ -1,0 +1,32 @@
+<div>
+    <label
+        *ngIf="label()"
+        [for]="id()"
+        [ngClass]="generateLabelClass"
+    >
+        {{ label() }}
+    </label>
+    @if (rows() > 1){
+    <textarea
+        [id]="id()"
+        [placeholder]="placeholder()"
+        class="w-full border dark:border-slate-500 border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-300 dark:placeholder-slate-500"
+        [ngClass]="generateClass"
+        [value]="value"
+        (input)="onInput($event)"
+        (blur)="onTouched()"
+        rows="rows()"
+    ></textarea>
+    } @else {
+    <input
+        [id]="id()"
+        [type]="type()"
+        [placeholder]="placeholder()"
+        class="w-full border dark:border-slate-500 border-slate-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-300 dark:placeholder-slate-500"
+        [ngClass]="generateClass"
+        [value]="value"
+        (input)="onInput($event)"
+        (blur)="onTouched()"
+    />
+    }
+</div>

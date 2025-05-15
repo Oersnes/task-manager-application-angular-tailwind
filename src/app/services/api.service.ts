@@ -24,7 +24,7 @@ export class ApiService {
     }
     // Update a task
     updateTask(id: TaskId, task: UpdatedTask): Observable<any> {
-        return this.http.put(`${this.baseUrl}/tasks/${id}`, task);
+        return this.http.patch(`${this.baseUrl}/tasks/${id}`, task);
     }
     // Delete a task
     deleteTask(id: TaskId): Observable<any> {

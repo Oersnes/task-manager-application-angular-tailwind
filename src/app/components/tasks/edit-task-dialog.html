@@ -1,0 +1,46 @@
+<form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+>
+    <h2 mat-dialog-title>Edit task</h2>
+    <div class="mat-typography w-96 grid gap-4 px-6">
+        <div>
+            <app-input
+                formControlName="name"
+                type="text"
+                size="medium"
+                label="Name"
+                placeholder="Name"
+            />
+        </div>
+        <app-input
+            formControlName="description"
+            type="text"
+            size="medium"
+            placeholder="Description"
+            label="Description"
+            [rows]="3"
+        />
+
+        <ul class="list-disc list-inside space-y-2">
+            @if (form.get('name')?.errors?.["maxlength"]) {
+            <li>Name must be under {{ form.get('name')?.errors?.["maxlength"].requiredLength }} characters</li>
+            } @else if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <li>Name is required</li>
+            } @if (form.get('description')?.errors?.["maxlength"]) {
+            <li>Description must be under {{ form.get('description')?.errors?.["maxlength"].requiredLength }} characters</li>
+            }
+        </ul>
+    </div>
+
+    <div class="flex justify-end p-4 gap-2">
+        <app-button
+            type="submit"
+            variant="cta"
+            [disabled]="form.invalid"
+        >
+            Update
+        </app-button>
+        <app-button (click)="onCancel()">Cancel</app-button>
+    </div>
+</form>

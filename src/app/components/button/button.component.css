@@ -2,7 +2,7 @@
 @reference "../../../styles.css";
 
 .btn-color-primary {
-    @apply text-sky-700 dark:text-sky-200 ;
+    @apply text-sky-700 dark:text-sky-200;
     
     &.btn-variant-contained {
         @apply bg-sky-100  dark:bg-sky-700/50 border-none;
@@ -42,4 +42,8 @@
 }
 .btn-variant-ghost {
     @apply bg-transparent border-none;
+}
+
+[disabled="true"]{
+    opacity: 0.35;
 }

@@ -1,0 +1,59 @@
+<form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+>
+    <h2 mat-dialog-title>New task</h2>
+    <div class="mat-typography w-96 grid gap-4 px-6">
+        <div>
+            <app-input
+                formControlName="name"
+                type="text"
+                size="medium"
+                label="Name"
+                placeholder="What’s your next task?"
+            />
+        </div>
+        <app-input
+            formControlName="description"
+            type="text"
+            size="medium"
+            placeholder="Want to describe the task in more detail?"
+            label="Description"
+            [rows]="3"
+        />
+
+        <ul class="list-disc list-inside space-y-2">
+            @if (form.get('name')?.errors?.["maxlength"]) {
+            <li>Name must be under {{ form.get('name')?.errors?.["maxlength"].requiredLength }} characters</li>
+            } @else if (form.get('name')?.invalid && form.get('name')?.touched) {
+            <li>Name is required</li>
+            } @if (form.get('description')?.errors?.["maxlength"]) {
+            <li>Description must be under {{ form.get('description')?.errors?.["maxlength"].requiredLength }} characters</li>
+            }
+        </ul>
+    </div>
+
+    <div class="grid grid-cols-[1fr_auto] p-4 gap-2 items-center">
+        <div>
+            <label class="label">
+                <input
+                    type="checkbox"
+                    [checked]="createAnother()"
+                    (change)="toggleCheckbox()"
+                    class="checkbox"
+                />
+                Create another
+            </label>
+        </div>
+        <div class="flex gap-2">
+            <app-button
+                type="submit"
+                variant="cta"
+                [disabled]="form.invalid"
+            >
+                Create
+            </app-button>
+            <app-button (click)="onCancel()">Cancel</app-button>
+        </div>
+    </div>
+</form>
