@@ -70,7 +70,10 @@ export const TasksStore = signalStore(
                     next: () => {
                         patchState(store, { tasks: store.tasks().filter((task) => task.id !== taskId) });
                     },
-                    error: console.error, // TODO: Handle error
+                    error: (error) => {
+                        console.error(error);
+                        throw error;
+                    },
                 })
             );
         },
@@ -80,7 +83,10 @@ export const TasksStore = signalStore(
                     next: (response) => {
                         patchState(store, { tasks: [...store.tasks(), response] });
                     },
-                    error: console.error, // TODO: Handle error
+                    error: (error) => {
+                        console.error(error);
+                        throw error;
+                    },
                 })
             );
         },
@@ -95,7 +101,10 @@ export const TasksStore = signalStore(
                         }
                         patchState(store, { tasks: [...currentTasks] });
                     },
-                    error: console.error,
+                    error: (error) => {
+                        console.error(error);
+                        throw error;
+                    },
                 })
             );
         },

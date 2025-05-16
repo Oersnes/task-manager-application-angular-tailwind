@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Task, TaskStatus } from '../../models/Task';
@@ -15,6 +16,15 @@ import { ButtonComponent } from '../button/button.component';
 import { InputComponent } from '../input/input.component';
 
 const confirmedIdentifier = 'confirmed';
+const snackBarConfigSuccess: MatSnackBarConfig = {
+    horizontalPosition: 'center',
+    verticalPosition: 'top',
+    duration: 3000,
+};
+const snackBarConfigError: MatSnackBarConfig = {
+    horizontalPosition: 'center',
+    verticalPosition: 'top',
+};
 
 @Component({
     selector: 'app-tasks',
@@ -37,6 +47,7 @@ export class TasksComponent implements OnInit {
     readonly store = inject(TasksStore);
     readonly TaskStatus = TaskStatus;
     readonly dialog = inject(MatDialog);
+    private _snackBar = inject(MatSnackBar);
 
     constructor(private route: ActivatedRoute, private router: Router) {}
 
@@ -54,9 +65,6 @@ export class TasksComponent implements OnInit {
 
     openCreateTaskDialog() {
         const dialogRef = this.dialog.open(CreateTaskDialog, { disableClose: true });
-        dialogRef.afterClosed().subscribe((result) => {
-            console.log(`Dialog result: ${result}`);
-        });
     }
 
     editTask(task: Task) {
@@ -69,10 +77,11 @@ export class TasksComponent implements OnInit {
             if (result === confirmedIdentifier) {
                 this.store.deleteTask(task.id).subscribe({
                     next: () => {
+                        this._snackBar.open('Task deleted', 'Close', snackBarConfigSuccess);
                         // Store will do the cleanup.
                     },
-                    error: () => {
-                        // Handle error
+                    error: (error) => {
+                        this._snackBar.open('Task could not be deleted. Please try again', 'Close', snackBarConfigError);
                     },
                 });
             }
@@ -81,8 +90,12 @@ export class TasksComponent implements OnInit {
 
     changeTaskStatus(task: Task, newTaskStatus: TaskStatus) {
         this.store.updateTask(task.id, { status: newTaskStatus }).subscribe({
-            next: () => null,
-            error: () => null,
+            next: () => {
+                this._snackBar.open('Task status updated', 'Close', snackBarConfigSuccess);
+            },
+            error: () => {
+                this._snackBar.open('Task status could not be updated', 'Close', snackBarConfigError);
+            },
         });
     }
 
@@ -111,6 +124,8 @@ export class TasksComponent implements OnInit {
 export class CreateTaskDialog {
     readonly store = inject(TasksStore);
     readonly dialogRef = inject(MatDialogRef<CreateTaskDialog>);
+    private _snackBar = inject(MatSnackBar);
+
     createAnother = signal(false);
 
     form = new FormGroup({
@@ -139,9 +154,10 @@ export class CreateTaskDialog {
                     } else {
                         this.dialogRef.close(confirmedIdentifier);
                     }
+                    this._snackBar.open('Task created', 'Close', snackBarConfigSuccess);
                 },
                 error: () => {
-                    //
+                    this._snackBar.open('Task could not be created', 'Close', snackBarConfigError);
                 },
             });
         } else {
@@ -159,6 +175,7 @@ export class EditTaskDialog {
     readonly store = inject(TasksStore);
     readonly dialogRef = inject(MatDialogRef<EditTaskDialog>);
     readonly originalTaskData = inject<Task>(MAT_DIALOG_DATA);
+    private _snackBar = inject(MatSnackBar);
 
     form = new FormGroup({
         name: new FormControl<string>(this.originalTaskData.name, [Validators.required, Validators.maxLength(80)]),
@@ -166,7 +183,6 @@ export class EditTaskDialog {
     });
 
     onCancel(): void {
-        // this.form.markAsUntouched();
         this.dialogRef.close('cancelled');
     }
 
@@ -177,13 +193,14 @@ export class EditTaskDialog {
                 .subscribe({
                     next: () => {
                         this.dialogRef.close(confirmedIdentifier);
+                        this._snackBar.open('Task updated', 'Close', snackBarConfigSuccess);
                     },
                     error: () => {
-                        //
+                        this._snackBar.open('Task could not be updated', 'Close', snackBarConfigError);
                     },
                 });
         } else {
-            console.log('Form is invalid');
+            // Form is invalid and user was notified inside the dialog.
         }
     }
 }
