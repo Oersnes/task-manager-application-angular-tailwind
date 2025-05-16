@@ -22,6 +22,8 @@ Once the server is running, open your browser and navigate to `http://localhost:
 
 ## Additional features implemented
 
+Simple Routes handling with Page Not Found and redirects.
+
 A dark mode toggle button to demonstrate Tailwind flexibility.
 
 Added "Create another" functionality to the "New task" dialog. This makes it more efficient for users to create multiple tasks.

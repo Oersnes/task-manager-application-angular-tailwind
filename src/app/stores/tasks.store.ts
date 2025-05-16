@@ -25,7 +25,7 @@ const initialState: TasksState = {
 };
 
 export const TasksStore = signalStore(
-    { providedIn: 'root' }, // Avoid providers: [TasksStore] in each @Component. TasksStore is a single instance that can be shared by the entire app. Like a shoppingStore where we need to display the count inside the header
+    { providedIn: 'root' }, // Avoid providers: [TasksStore] in each @Component. TasksStore is a single instance that can be shared by the entire app.
     withState(initialState),
     withComputed(({ tasks, sortDirection, searchTerm }) => ({
         sortedSwimLanes: computed(() => {
@@ -118,7 +118,7 @@ export const TasksStore = signalStore(
                         tapResponse({
                             next: (tasks) => patchState(store, { tasks }),
                             error: console.error,
-                            finalize: () => patchState(store, { isLoading: false }),
+                            finalize: () => patchState(store, { isLoading: false, initialized: true }),
                         })
                     );
                 })

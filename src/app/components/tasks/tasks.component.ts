@@ -207,7 +207,7 @@ export class EditTaskDialog {
 
 @Component({
     templateUrl: 'confirm-dialog.html',
-    imports: [MatDialogModule, ReactiveFormsModule, ButtonComponent],
+    imports: [MatDialogModule, ButtonComponent],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialog {
