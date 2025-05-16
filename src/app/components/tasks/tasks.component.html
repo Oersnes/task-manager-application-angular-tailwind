@@ -71,7 +71,7 @@
                     'border-emerald-200': task.status === TaskStatus.Completed
                 }"
             >
-                <div class="flex justify-end">
+                <div class="flex justify-end mb-0.5">
                     <div
                         class="text-xs font-base text-neutral-700 dark:text-neutral-300"
                         matTooltip="{{ task.creationDate | date : 'medium' }}"
@@ -82,7 +82,6 @@
                 <div class="text-lg font-semibold">
                     {{ task.name }}
                 </div>
-
                 <div class="text-sm text-gray-700 dark:text-neutral-300 whitespace-pre-line font-medium">
                     {{ task.description || '&nbsp;' }}
                 </div>

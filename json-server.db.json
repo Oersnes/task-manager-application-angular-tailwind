@@ -1,3 +1,53 @@
 {
-    "tasks": []
+  "tasks": [
+    {
+      "name": "Implement Task creation",
+      "description": "With name and descriptions fields",
+      "status": "completed",
+      "creationDate": "2025-05-15T07:50:11.891Z",
+      "id": 1
+    },
+    {
+      "name": "Implement Task update and delete",
+      "description": "Provide feedback for user actions",
+      "status": "completed",
+      "creationDate": "2025-05-15T08:52:12.444Z",
+      "id": 2
+    },
+    {
+      "name": "Implement search",
+      "description": "By task name",
+      "status": "completed",
+      "creationDate": "2025-05-15T09:53:09.813Z",
+      "id": 3
+    },
+    {
+      "name": "Utilize @ngrx/signalStore",
+      "description": "For state management",
+      "status": "completed",
+      "creationDate": "2025-05-15T11:53:47.446Z",
+      "id": 4
+    },
+    {
+      "name": "Include a README file",
+      "description": "With instructions on how to run the application and any additional features implemented",
+      "status": "completed",
+      "creationDate": "2025-05-16T07:54:25.727Z",
+      "id": 5
+    },
+    {
+      "name": "Handle empty states",
+      "description": "Like \"Create your first task\" and \"No search results\"",
+      "status": "inProgress",
+      "creationDate": "2025-05-16T07:55:08.496Z",
+      "id": 6
+    },
+    {
+      "name": "Implement drag and drop",
+      "description": "To change task status. Add dropzones.",
+      "status": "todo",
+      "creationDate": "2025-05-16T07:59:16.849Z",
+      "id": 7
+    }
+  ]
 }
