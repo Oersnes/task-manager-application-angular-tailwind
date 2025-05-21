@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Injector, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
@@ -47,6 +47,7 @@ export class TasksComponent implements OnInit {
     readonly store = inject(TasksStore);
     readonly TaskStatus = TaskStatus;
     readonly dialog = inject(MatDialog);
+    readonly injector = inject(Injector);
     private _snackBar = inject(MatSnackBar);
 
     constructor(private route: ActivatedRoute, private router: Router) {}
@@ -101,7 +102,7 @@ export class TasksComponent implements OnInit {
 
     ngOnInit() {
         const searchTerm = this.store.searchTerm;
-        this.store.loadBySearchTerm(searchTerm);
+        this.store.loadBySearchTerm(searchTerm, { injector: this.injector });
         /* this.route.queryParams.subscribe((params) => {
             this.store.updateSelectedStatus(params['status']);
         }); */
